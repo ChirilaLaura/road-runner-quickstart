@@ -17,6 +17,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.RobotLog;
 
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
@@ -39,7 +41,10 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
 @Config
 @Autonomous(group = "drive")
 public class DriveVelocityPIDTuner extends LinearOpMode {
-    public static double DISTANCE = 72;
+    public static double DISTANCE = 10;
+    public static double maxVel = 0.8;
+    public static double maxAccel = 1.6;
+    public static double maxJerk = 0.0;
 
     private static final String PID_VAR_NAME = "VELO_PID";
 
@@ -53,9 +58,9 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
         MotionState start = new MotionState(movingForward ? 0 : DISTANCE, 0, 0, 0);
         MotionState goal = new MotionState(movingForward ? DISTANCE : 0, 0, 0, 0);
         return MotionProfileGenerator.generateSimpleMotionProfile(start, goal,
-                DriveConstants.BASE_CONSTRAINTS.maxVel,
-                DriveConstants.BASE_CONSTRAINTS.maxAccel,
-                DriveConstants.BASE_CONSTRAINTS.maxJerk);
+                maxVel,
+                maxAccel,
+                maxJerk);
     }
 
     private void addPidVariable() {
@@ -132,15 +137,19 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
 
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
+        TelemetryPacket fastTelemetry = new TelemetryPacket();
+
         drive = new SampleMecanumDrive(hardwareMap);
 
         addPidVariable();
 
         NanoClock clock = NanoClock.system();
 
-        telemetry.addLine("Ready!");
-        telemetry.update();
-        telemetry.clearAll();
+
+        fastTelemetry.addLine("Ready!");
+        //telemetry.addLine("Ready!");
+       // telemetry.update();
+       // telemetry.clearAll();
 
         waitForStart();
 
@@ -169,12 +178,16 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
             List<Double> velocities = drive.getWheelVelocities();
 
             // update telemetry
-            telemetry.addData("targetVelocity", motionState.getV());
+            //telemetry.addData("targetVelocity", motionState.getV());
+            fastTelemetry.put("targetVelocity", motionState.getV());
             for (int i = 0; i < velocities.size(); i++) {
-                telemetry.addData("velocity" + i, velocities.get(i));
-                telemetry.addData("error" + i, motionState.getV() - velocities.get(i));
+                //telemetry.addData("velocity" + i, velocities.get(i));
+               // telemetry.addData("error" + i, motionState.getV() - velocities.get(i));
+                fastTelemetry.put("velocity" + i, velocities.get(i));
+                fastTelemetry.put("error" + i, motionState.getV() - velocities.get(i));
             }
-            telemetry.update();
+            //telemetry.update();
+            dashboard.sendTelemetryPacket(fastTelemetry);
         }
 
         removePidVariable();
