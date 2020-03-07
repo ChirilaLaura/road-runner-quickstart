@@ -150,6 +150,11 @@ public class SampleTankDrive extends TankDrive {
         return new TrajectoryBuilder(startPose, constraints);
     }
 
+    public TrajectoryBuilder trajectoryBuilder(Pose2d startPose, boolean reversed) {
+        return new TrajectoryBuilder(startPose, reversed, constraints);
+    }
+
+
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose, double startHeading) {
         return new TrajectoryBuilder(startPose, startHeading, constraints);
     }

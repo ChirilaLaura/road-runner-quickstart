@@ -44,6 +44,8 @@ public class DriveConstants {
     public static double WHEEL_RADIUS = 0.05;
     public static double GEAR_RATIO = 0.5; // output (wheel) speed / input (motor) speed
     public static double TRACK_WIDTH = 0.42;
+    public static double WHEEL_BASE = 0.44;
+    public static double lateralMultiplier = 0.5;
 
 
     /*
@@ -66,7 +68,7 @@ public class DriveConstants {
      */
     public static DriveConstraints BASE_CONSTRAINTS = new DriveConstraints(
             0.8, 1.6, 2.5,
-            Math.toRadians(130.0), Math.toRadians(260.0), 0.0
+            Math.toRadians(131.0), Math.toRadians(262.0), 0.0
     );
 
 
